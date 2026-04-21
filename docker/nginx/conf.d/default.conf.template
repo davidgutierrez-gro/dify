@@ -1,12 +1,12 @@
 # Please do not directly edit this file. Instead, modify the .env variables related to NGINX configuration.
+# Modified for Dokploy: added Docker DNS resolver to prevent stale upstream IPs after redeploy.
 
 server {
     listen ${NGINX_PORT};
     server_name ${NGINX_SERVER_NAME};
 
-    # Use Docker's embedded DNS so upstream IPs are re-resolved dynamically.
-    # Without this, nginx caches the IP at startup; if a container is recreated
-    # (e.g. after a Dokploy redeploy with new env vars) nginx keeps the stale IP → 502.
+    # Use Docker's embedded DNS for dynamic hostname resolution.
+    # This prevents 502 errors when api/web containers are recreated with new IPs.
     resolver 127.0.0.11 valid=10s ipv6=off;
 
     location /console/api {
@@ -21,15 +21,6 @@ server {
       include proxy.conf;
     }
 
-    location /socket.io/ {
-      set $api_upstream http://api:5001;
-      proxy_pass $api_upstream;
-      include proxy.conf;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-      proxy_cache_bypass $http_upgrade;
-    }
-
     location /v1 {
       set $api_upstream http://api:5001;
       proxy_pass $api_upstream;
@@ -42,37 +33,12 @@ server {
       include proxy.conf;
     }
 
-    location /explore {
-      set $web_upstream http://web:3000;
-      proxy_pass $web_upstream;
-      include proxy.conf;
-    }
-
-    location /e/ {
-      set $plugin_upstream http://plugin_daemon:5002;
-      proxy_pass $plugin_upstream;
-      proxy_set_header Dify-Hook-Url $scheme://$host$request_uri;
-      include proxy.conf;
-    }
-
     location / {
       set $web_upstream http://web:3000;
       proxy_pass $web_upstream;
       include proxy.conf;
     }
 
-    location /mcp {
-      set $api_upstream http://api:5001;
-      proxy_pass $api_upstream;
-      include proxy.conf;
-    }
-
-    location /triggers {
-      set $api_upstream http://api:5001;
-      proxy_pass $api_upstream;
-      include proxy.conf;
-    }
-    
     # placeholder for acme challenge location
     ${ACME_CHALLENGE_LOCATION}
 
