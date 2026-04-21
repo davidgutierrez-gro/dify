@@ -1064,7 +1064,7 @@ services:
     ports:
       - "${EXPOSE_PLUGIN_DEBUGGING_PORT:-5003}:${PLUGIN_DEBUGGING_PORT:-5003}"
     volumes:
-      - ./volumes/plugin_daemon:/app/storage
+      - dify_plugin_daemon_data:/app/storage
     depends_on:
       db_postgres:
         condition: service_healthy
@@ -1678,3 +1678,4 @@ volumes:
   dify_es01_data:
   dify_db_data:
   dify_redis_data:
+  dify_plugin_daemon_data:
