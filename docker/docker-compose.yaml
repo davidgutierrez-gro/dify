@@ -1171,8 +1171,14 @@ services:
       - api
       - web
     ports:
-      - "3100:80"
-      - "3101:443"
+      - "127.0.0.1:3100:80"
+    networks:
+      - default
+      - dokploy-network
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      - traefik.http.services.dify-nginx.loadbalancer.server.port=80
 
   # The Weaviate vector store.
   weaviate:
@@ -1668,6 +1674,8 @@ networks:
   opensearch-net:
     driver: bridge
     internal: true
+  dokploy-network:
+    external: true
 
 volumes:
   oradata:
