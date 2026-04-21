@@ -905,8 +905,6 @@ services:
   # The PostgreSQL database.
   db_postgres:
     image: postgres:15-alpine
-    profiles:
-      - postgresql
     restart: always
     environment:
       POSTGRES_USER: ${DB_USERNAME:-postgres}
@@ -922,14 +920,12 @@ services:
                -c 'statement_timeout=${POSTGRES_STATEMENT_TIMEOUT:-0}'
                -c 'idle_in_transaction_session_timeout=${POSTGRES_IDLE_IN_TRANSACTION_SESSION_TIMEOUT:-0}'
     volumes:
-      - ./volumes/db/data:/var/lib/postgresql/data
+      - dify_db_data:/var/lib/postgresql/data
     healthcheck:
       test:
         [
           "CMD",
           "pg_isready",
-          "-h",
-          "db_postgres",
           "-U",
           "${DB_USERNAME:-postgres}",
           "-d",
@@ -977,7 +973,7 @@ services:
       REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
     volumes:
       # Mount the redis data directory to the container.
-      - ./volumes/redis/data:/data
+      - dify_redis_data:/data
     # Set the redis password when startup redis server.
     command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456} --save "" --stop-writes-on-bgsave-error no
     healthcheck:
@@ -1680,3 +1676,5 @@ networks:
 volumes:
   oradata:
   dify_es01_data:
+  dify_db_data:
+  dify_redis_data:
