@@ -153,7 +153,7 @@ services:
     restart: "no"
     command: sh -c "chown -R 1001:1001 /app/api/storage"
     volumes:
-      - dify_app_storage:/app/api/storage
+      - dify153_app_storage:/app/api/storage
 
   # API service
   api:
@@ -173,7 +173,7 @@ services:
       init_permissions:
         condition: service_completed_successfully
     volumes:
-      - dify_app_storage:/app/api/storage
+      - dify153_app_storage:/app/api/storage
     networks:
       - ssrf_proxy_network
       - default
@@ -196,7 +196,7 @@ services:
       init_permissions:
         condition: service_completed_successfully
     volumes:
-      - dify_app_storage:/app/api/storage
+      - dify153_app_storage:/app/api/storage
     networks:
       - ssrf_proxy_network
       - default
@@ -228,7 +228,7 @@ services:
                -c 'maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM:-64MB}'
                -c 'effective_cache_size=${POSTGRES_EFFECTIVE_CACHE_SIZE:-4096MB}'
     volumes:
-      - dify_db_data:/var/lib/postgresql/data
+      - dify153_db_data:/var/lib/postgresql/data
     healthcheck:
       test: [ 'CMD', 'pg_isready' ]
       interval: 1s
@@ -242,7 +242,7 @@ services:
     environment:
       REDISCLI_AUTH: ${REDIS_PASSWORD:-difyai123456}
     volumes:
-      - dify_redis_data:/data
+      - dify153_redis_data:/data
     command: redis-server --requirepass ${REDIS_PASSWORD:-difyai123456} --save "" --stop-writes-on-bgsave-error no
     healthcheck:
       test: [ 'CMD', 'redis-cli', 'ping' ]
@@ -260,7 +260,7 @@ services:
       HTTPS_PROXY: ${SANDBOX_HTTPS_PROXY:-http://ssrf_proxy:3128}
       SANDBOX_PORT: ${SANDBOX_PORT:-8194}
     volumes:
-      - dify_sandbox_deps:/dependencies
+      - dify153_sandbox_deps:/dependencies
     healthcheck:
       test: [ 'CMD', 'curl', '-f', 'http://localhost:8194/health' ]
     networks:
@@ -335,7 +335,7 @@ networks:
     external: true
 
 volumes:
-  dify_db_data:
-  dify_redis_data:
-  dify_app_storage:
-  dify_sandbox_deps:
+  dify153_db_data:
+  dify153_redis_data:
+  dify153_app_storage:
+  dify153_sandbox_deps:
