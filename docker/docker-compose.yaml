@@ -175,7 +175,6 @@ services:
     volumes:
       - dify153_app_storage:/app/api/storage
     networks:
-      - ssrf_proxy_network
       - default
 
   # worker service
@@ -198,7 +197,6 @@ services:
     volumes:
       - dify153_app_storage:/app/api/storage
     networks:
-      - ssrf_proxy_network
       - default
 
   # Frontend web application.
